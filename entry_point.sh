@@ -11,10 +11,8 @@ if [ -z "$CI_BRANCH" ] || [ -z "$CI_REPO_URL" ] || [ -z "$CI_BUILD_SCRIPT" ]; th
     exit 1
 fi
 
-if [ -z "$CI_COMMIT" ]; then
+if [ -z "$CI_CHECKOUT" ]; then
     CI_CHECKOUT="$CI_BRANCH"
-else
-    CI_CHECKOUT="$CI_COMMIT"
 fi
 
 function init() {
@@ -25,14 +23,16 @@ function init() {
     mkdir /work
     mkdir -p "$COMPOSE_DIR"
 
-    git clone --depth 20 "$REPO_URL" "$CLONE_DIR"
+    git clone --depth 20 "$CI_REPO_URL" "$CLONE_DIR"
     cd "$CLONE_DIR" || exit
     git checkout "$CI_CHECKOUT"
 
     # Run the build script
     if [ -f "$CI_BUILD_SCRIPT" ]; then
         chmod +x "$CI_BUILD_SCRIPT"
-        "$CI_BUILD_SCRIPT" ${CI_BUILD_SCRIPT_ARGS[*]}
+        
+        # shellcheck disable=SC2068
+        "$CI_BUILD_SCRIPT" ${CI_BUILD_SCRIPT_ARGS[@]}
     fi
 }
 
