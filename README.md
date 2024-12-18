@@ -14,3 +14,4 @@ Optioonally, the following environment variables can be set:
 
 - `CI_BUILD_SCRIPT_ARGS`: arguments to pass to the build script
 - `CI_CHECKOUT`: the commit hash or tag to checkout after cloning the repository
+- `CI_ADD_PACKAGES`: a colon list of packages to install before running the build script

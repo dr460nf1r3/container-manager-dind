@@ -20,6 +20,12 @@ function init() {
     dockerd-entrypoint.sh &
     sleep 10
 
+    if [ -n "$CI_ADD_PACKAGES" ]; then
+        IFS=':'
+        read -r -a CI_PACKAGE_ARRAY <<< "$CI_ADD_PACKAGES"
+        apk add --no-cache "${CI_PACKAGE_ARRAY[@]}"
+    fi
+
     mkdir /work
     mkdir -p "$COMPOSE_DIR"
 
