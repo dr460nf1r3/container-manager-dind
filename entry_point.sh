@@ -23,7 +23,7 @@ function init() {
     # We don't want to run the init script if it has already been run
     if [ -f "$COMPOSE_DIR/.init_done" ]; then
         return
-    else 
+    else
         init_first_time
         touch "$COMPOSE_DIR/.init_done"
     fi
@@ -32,7 +32,7 @@ function init() {
 function init_first_time() {
     if [ -n "$CI_ADD_PACKAGES" ]; then
         IFS=':'
-        read -r -a CI_PACKAGE_ARRAY <<< "$CI_ADD_PACKAGES"
+        read -r -a CI_PACKAGE_ARRAY <<<"$CI_ADD_PACKAGES"
         apk add --no-cache "${CI_PACKAGE_ARRAY[@]}"
     fi
 
@@ -46,7 +46,7 @@ function init_first_time() {
     # Run the build script
     if [ -f "$CI_BUILD_SCRIPT" ]; then
         chmod +x "$CI_BUILD_SCRIPT"
-        
+
         # shellcheck disable=SC2068
         "$CI_BUILD_SCRIPT" ${CI_BUILD_SCRIPT_ARGS[@]}
     fi
