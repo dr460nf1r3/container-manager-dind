@@ -15,6 +15,8 @@ RUN apk add --no-cache git docker-compose bash
 COPY ./entry_point.sh /entry_point.sh
 RUN chmod +x /entry_point.sh
 
+VOLUME [ "/work", "/root/.docker", "/config" ]
+
 EXPOSE 80
 EXPOSE 443
 
