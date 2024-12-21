@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 COMPOSE_DIR="/work/compose"
 CLONE_DIR="/work/repo"
 
@@ -36,11 +38,10 @@ function init_first_time() {
         apk add --no-cache "${CI_PACKAGE_ARRAY[@]}"
     fi
 
-    mkdir /work
     mkdir -p "$COMPOSE_DIR"
 
     git clone --depth 20 "$CI_REPO_URL" "$CLONE_DIR"
-    cd "$CLONE_DIR" || exit
+    cd "$CLONE_DIR" || exit 2
     git checkout "$CI_CHECKOUT"
 
     # Run the build script
@@ -49,6 +50,9 @@ function init_first_time() {
 
         # shellcheck disable=SC2068
         "$CI_BUILD_SCRIPT" ${CI_BUILD_SCRIPT_ARGS[@]}
+    else 
+        echo "Build script not found"
+        exit 1
     fi
 
     # Authenticate, if needed
@@ -63,9 +67,9 @@ function init_first_time() {
 function main() {
     init
 
-    pushd "$COMPOSE_DIR" || exit
+    pushd "$COMPOSE_DIR" || exit 2
     docker compose up
-    popd || exit
+    popd || exit 2
 }
 
 main
