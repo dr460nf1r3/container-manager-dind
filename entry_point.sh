@@ -40,7 +40,7 @@ function init_first_time() {
 
     mkdir -p "$COMPOSE_DIR"
 
-    git clone --depth 20 "$CI_REPO_URL" "$CLONE_DIR"
+    git clone "$CI_REPO_URL" "$CLONE_DIR"
     cd "$CLONE_DIR" || exit 2
     git checkout "$CI_CHECKOUT"
 
@@ -50,7 +50,7 @@ function init_first_time() {
 
         # shellcheck disable=SC2068
         "$CI_BUILD_SCRIPT" ${CI_BUILD_SCRIPT_ARGS[@]}
-    else 
+    else
         echo "Build script not found"
         exit 1
     fi
