@@ -4,6 +4,8 @@ set -eo pipefail
 
 COMPOSE_DIR="/work/compose"
 CLONE_DIR="/work/repo"
+COMPOSE_PID=
+DOCKER_PID=
 
 if [ -z "$CI_BRANCH" ] || [ -z "$CI_REPO_URL" ] || [ -z "$CI_BUILD_SCRIPT" ]; then
     echo "You need to provide the following environment variables:"
@@ -17,10 +19,23 @@ if [ -z "$CI_CHECKOUT" ]; then
     CI_CHECKOUT="$CI_BRANCH"
 fi
 
+function shutdown() {
+  echo "Caught sigterm, shutting down..."
+  docker compose down
+  wait "$COMPOSE_PID"
+  kill -TERM "$DOCKER_PID" 2>/dev/null
+  wait "$DOCKER_PID"
+  exit 0
+}
+
 function init() {
     # Run the original entrypoint, and wait for the daemon to start
-    dockerd-entrypoint.sh &
+    echo "Starting docker daemon..."
+    dockerd-entrypoint.sh &>/dev/null & &>/dev/null
+    DOCKER_PID=$!
+
     sleep 10
+    echo "Docker daemon should be up by now, continuing..."
 
     # We don't want to run the init script if it has already been run
     if [ -f "$COMPOSE_DIR/.init_done" ]; then
@@ -32,20 +47,28 @@ function init() {
 }
 
 function init_first_time() {
+    echo "Running init script for the first time..."
+
+    # Install additional packages
     if [ -n "$CI_ADD_PACKAGES" ]; then
+        echo "Installing additional packages..."
         IFS=':'
         read -r -a CI_PACKAGE_ARRAY <<<"$CI_ADD_PACKAGES"
-        apk add --no-cache "${CI_PACKAGE_ARRAY[@]}"
+        apk add --no-cache "${CI_PACKAGE_ARRAY[@]}" &>/dev/null
     fi
 
     mkdir -p "$COMPOSE_DIR"
 
-    git clone "$CI_REPO_URL" "$CLONE_DIR"
+    # Clone the repository
+    echo "Cloning repository..."
+    git clone "$CI_REPO_URL" "$CLONE_DIR" &>/dev/null
+
     cd "$CLONE_DIR" || exit 2
     git checkout "$CI_CHECKOUT"
 
     # Run the build script
     if [ -f "$CI_BUILD_SCRIPT" ]; then
+        echo "Running build script..."
         chmod +x "$CI_BUILD_SCRIPT"
 
         # shellcheck disable=SC2068
@@ -60,6 +83,8 @@ function init_first_time() {
         if [ -z "$CI_REGISTRY" ]; then
             CI_REGISTRY="https://index.docker.io/v1/"
         fi
+
+        echo "Authenticating with container registry $CI_REGISTRY..."
         echo "$CI_DOCKERHUB_PASS" | docker login -u "$CI_DOCKERHUB_USER" --password-stdin "$CI_REGISTRY"
     fi
 }
@@ -67,9 +92,12 @@ function init_first_time() {
 function main() {
     init
 
-    pushd "$COMPOSE_DIR" || exit 2
-    docker compose up
-    popd || exit 2
+    cd "$COMPOSE_DIR" || exit 2
+    docker compose up -d
+    docker compose logs -f &
+    COMPOSE_PID=$!
+    wait "$COMPOSE_PID"
 }
 
+trap shutdown SIGINT SIGQUIT SIGTERM
 main
