@@ -12,7 +12,7 @@ HEALTHCHECK --interval=15s --timeout=30s --start-period=5s --retries=3 CMD docke
 
 STOPSIGNAL SIGTERM
 
-RUN apk add --no-cache git=2.47.1-r0 docker-cli-compose=2.31.0-r0 bash=5.2.37-r0
+RUN apk add --no-cache git=2.47.2-r0 docker-cli-compose=2.31.0-r0 bash=5.2.37-r0
 
 COPY ./entry_point.sh /entry_point.sh
 RUN chmod +x /entry_point.sh
