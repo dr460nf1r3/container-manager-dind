@@ -1,4 +1,4 @@
-FROM docker:27-dind
+FROM docker:28-dind
 
 # renovate: datasource=repology depName=alpine_3_21/git
 ENV GIT_VERSION="2.47.2-r0"
