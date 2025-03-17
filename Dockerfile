@@ -3,7 +3,7 @@ FROM docker:27-dind
 # renovate: datasource=repology depName=alpine_3_21/git
 ENV GIT_VERSION="2.47.2-r0"
 # renovate: datasource=repology depName=alpine_3_21/docker-cli-compose
-ENV DOCKER_CLI_COMPOSE_VERSION="2.31.0-r2"
+ENV DOCKER_CLI_COMPOSE_VERSION="2.31.0-r3"
 # renovate: datasource=repology depName=alpine_3_21/bash
 ENV BASH_VERSION="5.2.37-r0"
 
