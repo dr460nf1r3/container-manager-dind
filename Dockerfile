@@ -1,10 +1,10 @@
 FROM docker:28-dind
 
-# renovate: datasource=repology depName=alpine_3_21/git
-ENV GIT_VERSION="2.47.2-r0"
-# renovate: datasource=repology depName=alpine_3_21/docker-cli-compose
-ENV DOCKER_CLI_COMPOSE_VERSION="2.31.0-r5"
-# renovate: datasource=repology depName=alpine_3_21/bash
+# renovate: datasource=repology depName=alpine_3_22/git
+ENV GIT_VERSION="2.49.0-r0"
+# renovate: datasource=repology depName=alpine_3_22/docker-cli-compose
+ENV DOCKER_CLI_COMPOSE_VERSION="2.36.2-r0"
+# renovate: datasource=repology depName=alpine_3_22/bash
 ENV BASH_VERSION="5.2.37-r0"
 
 LABEL maintainer="Nico Jensch <root@dr460nf1r3.org>"
