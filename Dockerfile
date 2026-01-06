@@ -1,11 +1,11 @@
-FROM docker:28-dind
+FROM docker:29-dind
 
-# renovate: datasource=repology depName=alpine_3_22/git
-ENV GIT_VERSION="2.49.1-r0"
-# renovate: datasource=repology depName=alpine_3_22/docker-cli-compose
-ENV DOCKER_CLI_COMPOSE_VERSION="2.36.2-r0"
-# renovate: datasource=repology depName=alpine_3_22/bash
-ENV BASH_VERSION="5.2.37-r0"
+# renovate: datasource=repology depName=alpine_3_23/git
+ENV GIT_VERSION="2.52.0-r0"
+# renovate: datasource=repology depName=alpine_3_23/docker-cli-compose
+ENV DOCKER_CLI_COMPOSE_VERSION="2.40.3-r1"
+# renovate: datasource=repology depName=alpine_3_23/bash
+ENV BASH_VERSION="5.3.3-r1"
 
 LABEL maintainer="Nico Jensch <root@dr460nf1r3.org>"
 LABEL description="Docker in Docker with docker-compose and git, ready to use for CI/CD pipelines"
